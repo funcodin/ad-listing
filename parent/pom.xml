@@ -16,7 +16,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <spring.boot.version>1.5.4.RELEASE</spring.boot.version>
+        <spring.boot.version>1.5.7.RELEASE</spring.boot.version>
         <flyway.db.version>4.0</flyway.db.version>
         <mysql.connector.version>6.0.6</mysql.connector.version>
         <java.version>1.8</java.version>
@@ -25,9 +25,11 @@
         <c3p0.version>0.9.5.2</c3p0.version>
         <apache.commons.lang3.version>3.0</apache.commons.lang3.version>
         <apache.commons.collections4.version>4.0</apache.commons.collections4.version>
+        <aspectj.version>1.8.9</aspectj.version>
     </properties>
     <modules>
         <module>../ad-security</module>
+	<module>../dao-layer</module>
     </modules>
     <dependencyManagement>
         <dependencies>
@@ -46,11 +48,7 @@
                 <artifactId>spring-boot-starter-web</artifactId>
                 <version>${spring.boot.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-jdbc</artifactId>
-                <version>${spring.boot.version}</version>
-            </dependency>
+            
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-aop</artifactId>
@@ -61,20 +59,6 @@
                 <artifactId>spring-boot-starter-security</artifactId>
                 <version>${spring.boot.version}</version>
             </dependency>
-            
-            <!-- 
-            <dependency>
-                <groupId>com.mchange</groupId>
-                <artifactId>c3p0</artifactId>
-                <version>${c3p0.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <scope>runtime</scope>
-                <version>${mysql.connector.version}</version>
-            </dependency> -->
 
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -88,6 +72,11 @@
                 <scope>provided</scope>
                 <version>${spring.boot.version}</version>
             </dependency>
+            <dependency>
+    			<groupId>org.springframework.boot</groupId>
+    			<artifactId>spring-boot-starter-data-mongodb</artifactId>
+                <version>${spring.boot.version}</version>
+			</dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
@@ -119,6 +108,13 @@
                 <artifactId>commons-collections4</artifactId>
                 <version>${apache.commons.collections4.version}</version>
             </dependency>
+            <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-jwt -->
+			<dependency>
+    			<groupId>org.springframework.security</groupId>
+    			<artifactId>spring-security-jwt</artifactId>
+    			<version>1.0.8.RELEASE</version>
+			</dependency>
+            
         </dependencies>
     </dependencyManagement>
     <build>
