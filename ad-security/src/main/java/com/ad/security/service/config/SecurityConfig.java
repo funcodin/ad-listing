@@ -1,73 +1,56 @@
 package com.ad.security.service.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.ad.security.service.auth.AuthenticationFailureHandler;
-import com.ad.security.service.auth.AuthenticationSuccessHandler;
-import com.ad.security.service.auth.RestAuthenticationEntryPoint;
-import com.ad.security.service.auth.TokenAuthenticationFilter;
-import com.ad.security.service.impl.CustomUserDetailsService;
+import com.ad.security.filter.AuthenticationTokenFilter;
+import com.ad.security.service.impl.TokenAuthenticationService;
 
-@Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
-	@Value("${jwt.cookie}")
-    private String TOKEN_COOKIE;
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Value("${app.user_cookie}")
-    private String USER_COOKIE;
+    private final TokenAuthenticationService tokenAuthenticationService;
 
-    @Bean
-    public TokenAuthenticationFilter jwtAuthenticationTokenFilter() throws Exception {
-        return new TokenAuthenticationFilter();
+    @Autowired
+    protected SecurityConfig(final TokenAuthenticationService tokenAuthenticationService) {
+        super();
+        this.tokenAuthenticationService = tokenAuthenticationService;
     }
-
-    @Autowired
-    CustomUserDetailsService jwtUserDetailsService;
-
-    @Autowired
-    RestAuthenticationEntryPoint restAuthenticationEntryPoint;
-
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(jwtUserDetailsService);
-    }
-
-    @Autowired
-    private AuthenticationSuccessHandler authenticationSuccessHandler;
-
-    @Autowired
-    private AuthenticationFailureHandler authenticationFailureHandler;
-
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
-                
-                .sessionManagement().sessionCreationPolicy( SessionCreationPolicy.STATELESS ).and()
-                .exceptionHandling().authenticationEntryPoint( restAuthenticationEntryPoint ).and()
-                .addFilterBefore(jwtAuthenticationTokenFilter(), BasicAuthenticationFilter.class)
-                .authorizeRequests()
-                .anyRequest()
-                    .authenticated().and()
-                .formLogin()
-                    .successHandler(authenticationSuccessHandler)
-                    .failureHandler(authenticationFailureHandler).and()
-                .logout()
-                .deleteCookies(TOKEN_COOKIE, USER_COOKIE)
-                .logoutSuccessUrl("/login");
-    }	
-	
+    protected void configure(final HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                .antMatchers("/api/auth").permitAll()
+                .antMatchers("/api/signup").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .addFilterBefore(new AuthenticationTokenFilter(tokenAuthenticationService),
+                        UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .csrf().disable();
+    }
+
+    @Override
+    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
+        super.configure(auth);
+    }
+
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    @Override
+    public UserDetailsService userDetailsServiceBean() throws Exception {
+        return super.userDetailsServiceBean();
+    }
 }
