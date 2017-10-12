@@ -6,67 +6,78 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class User  implements UserDetails{
-	
-	private static final long serialVersionUID = 1L;
-	
-	private String username;
-	private String password;
-	private String firstname;
-	private String lastname;
-	private List<Authority> authorities;
-	
-	public String getFirstname() {
-        return firstname;
+public class User extends BaseEntity implements UserDetails {
+
+    private static final long serialVersionUID = 7954325925563724664L;
+
+    private List<Authority> authorities;
+    private String username;
+    private String password;
+    private boolean accountNonExpired;
+    private boolean accountNonLocked;
+    private boolean credentialsNonExpired;
+    private boolean isEnabled;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
+    @Override
+    public String getPassword() {
+        return password;
     }
 
-    public String getLastname() {
-        return lastname;
+    @Override
+    public String getUsername() {
+        return username;
     }
 
-    public void setLastname(String lastname) {
-
-        this.lastname = lastname;
+    @Override
+    public boolean isAccountNonExpired() {
+        return accountNonExpired;
     }
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return this.authorities;
-	}
-	@Override
-	public String getUsername() {
-		return this.username;
-	}
-	@Override
-	public boolean isAccountNonExpired() {
-		return true;
-	}
-	@Override
-	public boolean isAccountNonLocked() {
-		return true;
-	}
-	@Override
-	public boolean isCredentialsNonExpired() {
-		return true;
-	}
-	@Override
-	public boolean isEnabled() {
-		return true;
-	}
-	@Override
-	public String getPassword() {
-		return this.password;
-	}
-	public void setUsername( final String userName){
-		this.username = userName;
-	}
-	public void setPassword( final String password ) {
-		this.password = password;
-	}
-	
-	
 
+    @Override
+    public boolean isAccountNonLocked() {
+        return accountNonLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return credentialsNonExpired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public void setAuthorities(final List<Authority> authorities) {
+        this.authorities = authorities;
+    }
+
+    public void setUsername(final String username) {
+        this.username = username;
+    }
+
+    public void setPassword(final String password) {
+        this.password = password;
+    }
+
+    public void setAccountNonExpired(final boolean accountNonExpired) {
+        this.accountNonExpired = accountNonExpired;
+    }
+
+    public void setAccountNonLocked(final boolean accountNonLocked) {
+        this.accountNonLocked = accountNonLocked;
+    }
+
+    public void setCredentialsNonExpired(final boolean credentialsNonExpired) {
+        this.credentialsNonExpired = credentialsNonExpired;
+    }
+
+    public void setEnabled(final boolean enabled) {
+        isEnabled = enabled;
+    }
 }
